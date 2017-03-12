@@ -19,6 +19,15 @@ log = 'poker room 3D visualization'
 
 const RAD = 180/Math.PI
 
+const TABLETOP = 1.35
+const playerPos = [
+	{ tx:4 , ty:0 , rz:0 , cx:-2 , cy:0 , hx:-1, hy:0 },
+	{ tx:3 , ty:-5 , rz:-45/RAD, cx:-2 , cy:2, hx:-1 , hy:1  },
+	{ tx:-2, ty:-5 , rz:250/RAD, cx:0 , cy:3, hx:0 , hy:1.5  },
+	{ tx:-1, ty:5 , rz:90/RAD, cx:0 , cy:-2, hx:0 , hy:-1  },
+	{ tx:-4, ty:0 , rz:180/RAD, cx:1.5 , cy:0, hx:.75 , hy:0  },
+]
+
 function TRE () 
 { 
 
@@ -170,19 +179,18 @@ _z: -0
 			this.room.userData = { id:"room" }
 			log = this.room.uuid
 
-			this.room.position.x = 350
-			this.room.position.y = 1350
-			this.room.position.z = -300.00000000000017
-			this.room.rotation.x = -1.5707963267948968
-			this.room.rotation.y = 0
-			this.room.rotation.z = -0
-			
 			/*
-			this.camera.position.x = 293.03
-			this.camera.position.x = -504.256
-			this.camera.position.x = -1480.268
-			*/
+			
+			
 
+			*/
+			this.room.position.x = 300
+			this.room.position.y = 289.8
+			this.room.position.z = 1401
+
+			this.room.rotation.x = -0.17453
+			this.room.rotation.y = 0
+			this.room.rotation.z = 0
 
 			this.coloader( 'assets/table.dae' ).then(   
 				table => 
@@ -204,33 +212,7 @@ _z: -0
 				}
 			) 	
 
-			var playerPos = [
-				{ tx:4 , ty:0 , rz:0 , cx:-2 , cy:0 , hx:-1, hy:0 },
-				{ tx:3 , ty:-5 , rz:-45/RAD, cx:-2 , cy:2, hx:-1 , hy:1  },
-				{ tx:-2, ty:-5 , rz:250/RAD, cx:0 , cy:3, hx:0 , hy:1.5  },
-				{ tx:-1, ty:5 , rz:90/RAD, cx:0 , cy:-2, hx:0 , hy:-1  },
-				{ tx:-4, ty:0 , rz:180/RAD, cx:1.5 , cy:0, hx:.75 , hy:0  },
-			]
 
-			const TABLETOP = 1.35
-
-			this.coloader( 'assets/humanSit.dae').then(
-				player =>
-				{
-					this.players = []
-					playerPos.forEach( (pos,i) => 
-					{
-						let mob = player.clone()
-							mob.translateX( pos.tx )
-							mob.translateY( pos.ty )
-							mob.rotateZ( pos.rz )
-
-						this.players.push( mob )
-						this.room.add( mob )
-					})
-					player.translateX( -10000 )
-				}
-			)
 
 			this.coloader( 'assets/chair.dae').then(
 				chair =>
@@ -249,71 +231,103 @@ _z: -0
 					chair.translateX( -10000 )
 				}
 			)
-
-			this.coloader( 'assets/coins.dae').then(
-				coin =>
-				{
-					coin.scale.multiplyScalar( .1 )
-					this.coins = []
-					playerPos.forEach( (pos,i) => 
-					{
-						let della = coin.clone()
-							della.translateX( pos.tx + pos.cx )
-							della.translateY( pos.ty + pos.cy )
-							della.translateZ( TABLETOP )
-							this.addCoinRow( della, ~~(Math.random()*12)+2 )
-							della.name = "della"+i
-
-						this.coins.push( della )
-						this.room.add( della )
-					})
-
-				}
-			)			
-
-			this.coloader( 'assets/SQ.dae').then(
-				card =>
-				{
-					card.scale.multiplyScalar( 1 )
-
-					this.cards = []
-					playerPos.forEach( (pos,i) => 
-					{
-						let cc = card.clone()
-							cc.translateX( pos.tx + pos.cx + pos.hx/4 )
-							cc.translateY( pos.ty + pos.cy + pos.hy/4 )
-							cc.translateZ( TABLETOP + .05 )
-							cc.rotateX( 180/RAD )
-							cc.rotateZ( pos.rz )
-							cc.name = "card"+i
-						this.cards.push( cc )
-						this.room.add( cc )
-					})
-
-					this.street = []
-					for( let i=0;i<5;i++)
-					{
-						let pos = playerPos[0] // dealer position 	
-						let cc = card.clone()	
-							cc.translateX( pos.tx + pos.cx + pos.hx - 1 )
-							cc.translateY( pos.ty + pos.cy + pos.hy + i*.42 - 1 )
-							cc.translateZ( TABLETOP + .05 )
-							// cc.rotateX( 180/RAD )
-							cc.rotateZ( pos.rz )
-							cc.name = "card.street"+i
-						this.street.push( cc )
-						this.room.add( cc )
-					}
-
-					
-					// this.addCoinRow( this.coin2, 3 )
-				}
-			)			
-
-
 		})		
-
     }
+
+	this.playerArraive = function( game ){
+		
+		this.coloader( 'assets/humanSit.dae').then(
+			player =>
+			{
+				this.players = []
+				playerPos.forEach( (pos,i) => 
+				{
+					let mob = player.clone()
+						mob.translateX( pos.tx )
+						mob.translateY( pos.ty )
+						mob.rotateZ( pos.rz )
+
+					this.players.push( mob )
+					this.room.add( mob )
+				})
+				player.translateX( -10000 )
+			}
+		)
+	}
+	
+	this.dealCards  = function( game ){
+
+		this.coloader( 'assets/SQ.dae').then(
+			card =>
+			{
+				card.scale.multiplyScalar( 1 )
+
+				this.cards = []
+				playerPos.forEach( (pos,i) => 
+				{
+					let cc = card.clone()
+						cc.translateX( pos.tx + pos.cx + pos.hx/4 )
+						cc.translateY( pos.ty + pos.cy + pos.hy/4 )
+						cc.translateZ( TABLETOP + .05 )
+						cc.rotateX( 180/RAD )
+						cc.rotateZ( pos.rz )
+						cc.name = "card"+i
+					this.cards.push( cc )
+					this.room.add( cc )
+
+					let c2 = cc.clone()
+						c2.translateY( .42 )					
+						c2.name = cc.name + '.second'
+						this.room.add( c2 )
+					
+				})
+
+				this.street = []
+				for( let i=0;i<5;i++)
+				{
+					let pos = playerPos[0] // dealer position 	
+					let cc = card.clone()	
+						cc.translateX( pos.tx + pos.cx + pos.hx - 1 )
+						cc.translateY( pos.ty + pos.cy + pos.hy + i*.42 - 1 )
+						cc.translateZ( TABLETOP + .05 )
+						// cc.rotateX( 180/RAD )
+						cc.rotateZ( pos.rz )
+						cc.name = "card.street"+i
+					this.street.push( cc )
+					this.room.add( cc )				
+
+				}
+				
+				// this.addCoinRow( this.coin2, 3 )
+			}
+		)			
+		
+	}
+	
+	this.getMoney = function( game ) 
+	{
+		this.coloader( 'assets/coins.dae').then(
+			coin =>
+			{
+				coin.scale.multiplyScalar( .1 )
+				this.coins = []
+				playerPos.forEach( (pos,i) => 
+				{
+					let della = coin.clone()
+						della.translateX( pos.tx + pos.cx )
+						della.translateY( pos.ty + pos.cy - 0.5 )
+						della.translateZ( TABLETOP )
+						this.addCoinRow( della, 20 ) // ~~(Math.random()*12)+2
+						della.name = "della"+i
+
+					this.coins.push( della )
+					this.room.add( della )
+				})
+
+			}
+		)			
+		
+	}
 
     this.addCoinRow = function( coin, amount )
     {
@@ -410,7 +424,14 @@ _z: -0
 			if( pp && pp.parent && pp.parent.name.match(/card|della/)){
 				//log = pp.name
 				log = pp.parent.name 
-				setInterval( p => pp.rotateX( .003 ) , 5 )
+				pp.count = 0
+				pp.end = setInterval( p =>
+				{ 
+					// if( pp.count ++ > 70 ){ return clearInterval( pp.end ) }
+					pp.rotateZ( .003 ) 
+					pp.translateZ( .005 )									
+				}, 5 )
+				
 			}
 
 			switch( pp.name )
@@ -794,6 +815,8 @@ window.onload = function()
 	window.gestures = new Gestures( tree )
 
 	window.room = new RoomPlay( tree )		
+	
+	TRE.scene.rotateX( -90/RAD )
 }	
 
 /*
