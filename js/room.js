@@ -84,7 +84,7 @@ function TRE ()
 		var light = new THREE.AmbientLight( 0x252525 )        
 		scene_3D.add( light )
 
-		var controls = new THREE.DeviceOrientationControls( this.camera, true ) // KIHAL!! 
+		var controls = isMobile()  ? new THREE.DeviceOrientationControls( this.camera, true ) : null // KIHAL!! 
 
 		//this.orientationControl( {alpha:0.1} )
 
@@ -99,11 +99,11 @@ function TRE ()
             isMobile() ? stereo.render( scene_3D, camera ) : canvas_3D.render( scene_3D, camera )
 
             //this.camera.updateProjectionMatrix()
-            //if( isMobile() )
-            //{
+            if( isMobile() )
+            {
 	            controls.connect()
 	           	controls.update()
-	       	//}
+	       	}
         }
 
         animate()
@@ -209,6 +209,11 @@ _z: -0
 					this.human.position.set( 3, 5, 0 )
 					this.human.rotateZ( -30/RAD )
 					this.room.add( this.human )
+
+					/* // camera position by referenc object
+					this.camera.position.copy( this.human.matrixWorld.getPosition() )
+					this.camera.translateY( 150 )
+					*/
 				}
 			) 	
 
