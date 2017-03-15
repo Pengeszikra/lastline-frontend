@@ -8,3 +8,5 @@ Team [Last Line]() made this unfinished project at [Game of Code 2017](http://ww
 - pusher.js
 
 All 3D models created and painted with blender.
+
+[(https://github.com/Pengeszikra/lastline-frontend/blob/master/assets/last-line-poker-shoot-01.jpg)]
