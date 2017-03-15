@@ -2,7 +2,7 @@
 
   const suit = "CDHS";
   const run = "234567890JQKA";
-  const suitArray = [...suit]//[].slice.call(suit)
+  const suitArray = [...suit] //[].slice.call(suit)
   const runArray = [...run]
   const runSuitArray = [...run,...suit]
 
@@ -80,9 +80,10 @@ function TRE ()
 
         // if(isMobile){ this.controllByHeadMove() }
 
-        scene_3D.fog = new THREE.FogExp2( 0x000000, 0.00001 )
-		var light = new THREE.AmbientLight( 0x252525 )        
-		scene_3D.add( light )
+        //scene_3D.fog = new THREE.FogExp2( 0x000000, 0.00001 )
+        //scene_3D.fog = new THREE.FogExp2( 0xFFFFFF, 0.00001 )
+		//var light = new THREE.AmbientLight( 0x252525 )        
+		//scene_3D.add( light )
 
 		var controls = isMobile()  ? new THREE.DeviceOrientationControls( this.camera, true ) : null // KIHAL!! 
 
@@ -109,6 +110,8 @@ function TRE ()
         animate()
     }    
 
+    //https://threejs.org/examples/webgl_lights_hemisphere.html nice lightning 
+    // 
     this.init = function()
     {
 
@@ -119,7 +122,13 @@ function TRE ()
 
     	TRE.camera.position.set(0,0,0)
 
+    	/*
     	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.2 );
+			hemiLight.color.setHSL( 0.6, 1, 0.6 );
+			hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+			hemiLight.position.set( 0, 500, 0 );
+		*/
+		let	hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
 			hemiLight.color.setHSL( 0.6, 1, 0.6 );
 			hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
 			hemiLight.position.set( 0, 500, 0 );
@@ -129,48 +138,7 @@ function TRE ()
 		this.assetLoader()
     }
 
-    /*
-    this.controllByHeadMove = function( camera, domElement )
-    {
-		this.controls = new THREE.OrbitControls( camera, domElement );
-		this.controls.target.set(
-		  camera.position.x + 0.15,
-		  camera.position.y,
-		  camera.position.z
-		);
-		this.controls.noPan = true;
-		this.controls.noZoom = true;
-	}
-	*/
-
-	/*
-	this.orientationControl = function( e )
-	{
-		if( !e.alpha ){ return }
-        this.controls = new THREE.DeviceOrientationControls( this.camera, true );
-		this.controls.connect();
-		this.controls.update();
-    }
-    */
-
-    /*
-
-x: 350
-
-y: 1350
-
-z: -300.00000000000017
-_order: "XYZ"
-
-_x: -1.5707963267948968
-
-_y: 0
-
-_z: -0
-
-    */
-
-    this.assetLoader = function()
+	this.assetLoader = function()
     {
 		this.coloader( 'assets/pokerRoom5.dae' ).then( room =>
 		{
@@ -179,11 +147,6 @@ _z: -0
 			this.room.userData = { id:"room" }
 			log = this.room.uuid
 
-			/*
-			
-			
-
-			*/
 			this.room.position.x = 300
 			this.room.position.y = 289.8
 			this.room.position.z = 1401
@@ -209,11 +172,6 @@ _z: -0
 					this.human.position.set( 3, 5, 0 )
 					this.human.rotateZ( -30/RAD )
 					this.room.add( this.human )
-
-					/* // camera position by referenc object
-					this.camera.position.copy( this.human.matrixWorld.getPosition() )
-					this.camera.translateY( 150 )
-					*/
 				}
 			) 	
 
@@ -302,8 +260,7 @@ _z: -0
 					this.room.add( cc )				
 
 				}
-				
-				// this.addCoinRow( this.coin2, 3 )
+
 			}
 		)			
 		
@@ -350,72 +307,8 @@ _z: -0
     	return coins
     }
 
-    /*
-    this.pixi2three = function ( pix , width , height , isOpaque )
-    {
-
-    	var pt = new PIXI.RenderTexture( renderer , width || pix.width , height || pix.height )
-    	pt.render( pix )
-		var texTRE = new THREE.Texture( pt.getCanvas() ) 
-		texTRE.needsUpdate = true  
-      	var matTRE = new THREE.MeshBasicMaterial( {map: texTRE , side:THREE.DoubleSide  } )
-    	matTRE.transparent = !isOpaque
-    	matTRE.map.minFilter = THREE.LinearFilter
-		var mesh = new THREE.Mesh(	new THREE.PlaneBufferGeometry( pt.width, pt.height),  matTRE )
-
- 		return mesh 
- 	}
- 	*/
-
-    /*
-    this.placeModel = function( name , holder ){
-        var loader = new THREE.JSONLoader();
-        loader.load( name || '3d/ram1.json', function ( geometry, materials ) {
-            
-            let model = new THREE.Mesh( geometry , new THREE.MeshPhongMaterial( { color: rgray() } ) )
-
-            log = model
-            
-            model.scale.multiplyScalar( 170 * Math.random() ) 
-        })
-        
-    } 
-    */   
 
     function rgray(){ var c =  parseInt((~~(0xff * Math.random())).toString(16).repeat(3),16); return c }
-
-    /*
- 	this.cardRender = function( card , isInPlay , isInfoBox , side )
- 	{
-
- 		var cardTexture = skeletonCardRender( card , isInPlay || 0 , isInfoBox || 0 , side || 0 , true )
-		var texTRE = new THREE.Texture( cardTexture.getCanvas() ) 
-		texTRE.needsUpdate = true  
-
-		card.width = card.width ? card.width : 1
-
-		var pix = new PIXI.Sprite.fromImage( folder + `card-bckg-gz-w${card.width}.png` )
-    	var pt = new PIXI.RenderTexture( renderer , card.width*250 , 320 )
-    	pt.render( pix )
-		var backTRE = new THREE.Texture( pt.getCanvas() ) 
-		backTRE.needsUpdate = true 		
-      	var matTREbck = new THREE.MeshBasicMaterial( {map: backTRE , side:THREE.FrontSide  } )
-      	var matTRE = new THREE.MeshBasicMaterial( {map: texTRE , side:THREE.FrontSide  } )
-    	matTRE.transparent = true
-    	matTREbck.transparent = true
-    	matTRE.map.minFilter = THREE.LinearFilter
-    	matTREbck.map.minFilter = THREE.LinearFilter
-		let front = new THREE.Mesh(	new THREE.PlaneBufferGeometry( cardTexture.width, cardTexture.height),  matTRE )
-		let back = new THREE.Mesh(	new THREE.PlaneBufferGeometry( cardTexture.width, cardTexture.height),  matTREbck )
-		var mesh = new THREE.Mesh()
-		back.rotateY(180/RAD)
-		mesh.add( front )
-		mesh.add( back )		
-		mesh.serial = card.serial
-
-	 	return mesh 
-	 }    
-	 */
 
  	function handleInteraction( scene , camera )
  	{
@@ -647,13 +540,6 @@ class MatrixSwiper extends ThreeSwiper
 	{
 		this.focus = false 
 
-		/*
-		var card = TRE.cardRender( afs_collection.randomPick() , 0 , 0 , 0 , 1 ) 
-		card.position.addVectors( TRE.camera.position , new THREE.Vector3(  this.mouse.x * this.SCRW ,  this.mouse.y * this.SCRH , 0  ) )
-		card.translateZ( -800 - Math.random()*1500  ) 
-
-		TRE.scene.add( card )	
-		*/
 		// log = this.found()
 
 		let caster = new THREE.Raycaster()
