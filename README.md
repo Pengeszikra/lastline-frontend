@@ -9,4 +9,4 @@ Team [Last Line]() made this unfinished project at [Game of Code 2017](http://ww
 
 All 3D models created and painted with blender.
 
-[!(https://github.com/Pengeszikra/lastline-frontend/blob/master/assets/last-line-poker-shoot-01.jpg)]
+![Screen shoot from game](https://github.com/Pengeszikra/lastline-frontend/blob/master/assets/last-line-poker-shoot-01.jpg)
