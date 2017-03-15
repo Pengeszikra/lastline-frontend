@@ -70,20 +70,15 @@ function TRE ()
 
         document.body.appendChild( canvas_3D.domElement )
 
+        canvas_3D.domElement.oncontextmenu = e => e.preventDefault()
+
         var stereo = new THREE.StereoEffect( canvas_3D );
        		stereo.eyeSeparation = 1
        		stereo.setSize( width, height )
 
-        canvas_3D.domElement.oncontextmenu = e => e.preventDefault()
-
         this.renderer3d = canvas_3D
 
         // if(isMobile){ this.controllByHeadMove() }
-
-        //scene_3D.fog = new THREE.FogExp2( 0x000000, 0.00001 )
-        //scene_3D.fog = new THREE.FogExp2( 0xFFFFFF, 0.00001 )
-		//var light = new THREE.AmbientLight( 0x252525 )        
-		//scene_3D.add( light )
 
 		var controls = isMobile()  ? new THREE.DeviceOrientationControls( this.camera, true ) : null // KIHAL!! 
 
@@ -111,7 +106,8 @@ function TRE ()
     }    
 
     //https://threejs.org/examples/webgl_lights_hemisphere.html nice lightning 
-    // 
+    // https://tympanus.net/codrops/2016/04/26/the-aviator-animating-basic-3d-scene-threejs/ -- another coole light setup for minimal set 
+
     this.init = function()
     {
 
@@ -122,16 +118,28 @@ function TRE ()
 
     	TRE.camera.position.set(0,0,0)
 
-    	/*
-    	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.2 );
-			hemiLight.color.setHSL( 0.6, 1, 0.6 );
+    	// --------------[ Lightning ]
+
+    	let backgroundColor = 0x9999AA
+
+        TRE.scene.fog = new THREE.FogExp2( backgroundColor , 0.00001 )
+		TRE.renderer3d.setClearColor( backgroundColor ) 
+		TRE.renderer3d.setClearAlpha(1)
+		
+		
+		let light = new THREE.AmbientLight( 0x999999 )
+		TRE.ambient = light		
+		TRE.scene.add( light )
+		
+
+		//let	hemiLight = new THREE.HemisphereLight( 0xffffff, 0xAAAAAA, .7 );
+		let	hemiLight = new THREE.HemisphereLight( 0xffffff, 0xAAAAAA, 1 );
+			hemiLight.color.setHSL( 0.6, 1 , 0.6 );
+			hemiLight.color.setHex( 0x010101 );
 			hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+			hemiLight.groundColor.setHex( 0xAAAAAA );
 			hemiLight.position.set( 0, 500, 0 );
-		*/
-		let	hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
-			hemiLight.color.setHSL( 0.6, 1, 0.6 );
-			hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-			hemiLight.position.set( 0, 500, 0 );
+		TRE.hemiLight = hemiLight	
 		TRE.scene.add( hemiLight );
 
 
@@ -140,7 +148,7 @@ function TRE ()
 
 	this.assetLoader = function()
     {
-		this.coloader( 'assets/pokerRoom5.dae' ).then( room =>
+		this.coloader( 'assets/pokerRoom6.dae' ).then( room =>
 		{
 		 	this.room = room 
 			this.room.scale.multiplyScalar(50)
